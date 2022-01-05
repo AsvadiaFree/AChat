@@ -1,0 +1,23 @@
+formats:
+  default:
+    1:
+      texts:
+        faction: "Avadia &7"
+        player: "%player_name%"
+      hoverTexts:
+        faction: "Salut"
+    2:
+      texts:
+        faction: "Avadia &7"
+        player: "%player_name%"
+      hoverTexts:
+        faction: "Salut"
+  asvadium:
+    texts:
+      faction: "Avadia &7"
+      player: "%player_name%"
+    hoverTexts:
+      faction: "Salut"
+
+
+#achat.asvadium

@@ -7,9 +7,11 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -78,12 +80,14 @@ public class Listeners implements Listener {
                             if (PlaceholderAPI.containsPlaceholders(text.getText()))
                                 text.setText(PlaceholderAPI.setPlaceholders(player, text.getText()));
                             if (holderTexts.contains(s1)) {
-                                String hoverText = config.getString("formats." + s + "." + choose + ".hoverTexts." + s1);
+                                String hoverText = config.getString("formats." + s + "." + choose + ".hoverTexts." + s1 + ".text");
                                 if (PlaceholderAPI.containsPlaceholders(hoverText))
                                     hoverText = PlaceholderAPI.setPlaceholders(player, hoverText);
                                 text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(hoverText)));
+                                text.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(config.getString("formats." + s + "." + choose + ".hoverTexts." + s1 + ".cmd.type")), PlaceholderAPI.setPlaceholders(player, config.getString("formats." + s + "." + choose + ".hoverTexts." + s1 + ".cmd.text"))));
                             }
-                            messages[n++] = text;
+                            if (!StringUtils.isBlank(text.getText()))
+                                messages[n++] = text;
                         }
                         p.spigot().sendMessage(messages);
                     } catch (IOException e) {

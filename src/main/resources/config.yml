@@ -2,16 +2,38 @@ formats:
   default:
     1:
       texts:
-        faction: "Avadia &7"
-        player: "%player_name%"
+        faction: "%afc_position% &6&l%factionsuuid_faction_name% "
+        player: "%luckperms_prefix%%player_name%%deluxetags_tag% &f&l» &r&f"
+        message: "%message%"
       hoverTexts:
-        faction: "Salut"
+        faction:
+          text: |-
+            Salut
+            CPICPIU
+          cmd:
+            type: "RUN_COMMAND"
+            text: "/f show %factionsuuid_faction_name%"
+        player:
+          text: |-
+            &6&l%player_name%
+            &7▪ &fGrade: %luckperms_prefix%
+            &7▪ &fFaction: %rel_factionsuuid_relation_color%%factionsuuid_faction_name%
+            &7▪ &fCoins: &6%vault_eco_balance_formatted% &f&l$
+            &r
+            &f&l» &7&oEnvoyer un message à &b&o%player_name%
+          cmd:
+            type: "SUGGEST_COMMAND"
+            text: "/msg %player_name%"
     2:
       texts:
         faction: "Avadia &7"
         player: "%player_name%"
       hoverTexts:
-        faction: "Salut"
+        faction:
+          text: |-
+            Salut
+            CPICPIU
+          cmd: ""
   asvadium:
     texts:
       faction: "Avadia &7"
@@ -21,5 +43,5 @@ formats:
 mention:
   text: "%player% vous à mentionné !"
 spam:
-  text: "Arrete de spam !"
+  text: "Merci de ne pas spam !"
 #achat.asvadium

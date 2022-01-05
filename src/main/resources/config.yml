@@ -18,6 +18,8 @@ formats:
       player: "%player_name%"
     hoverTexts:
       faction: "Salut"
-
-
+mention:
+  text: "%player% vous à mentionné !"
+spam:
+  text: "Arrete de spam !"
 #achat.asvadium

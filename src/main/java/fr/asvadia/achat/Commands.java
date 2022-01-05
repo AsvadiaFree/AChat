@@ -13,10 +13,17 @@ public class Commands implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof ConsoleCommandSender) {
-            if (args.length < 2)
-                return false;
             YamlConfiguration players = FileManager.getValues().get(Files.Players);
-            players.set(args[0].toLowerCase(), Integer.parseInt(args[1]));
+            if (args.length == 1) {
+                boolean value = true;
+                if (players.contains(args[0].toLowerCase() + ".trad"))
+                    value = !players.getBoolean(args[0].toLowerCase() + ".trad");
+                players.set(args[0].toLowerCase() + ".trad", value);
+            } else {
+                if (args.length < 2)
+                    return false;
+                players.set(args[0].toLowerCase() + ".choose", Integer.parseInt(args[1]));
+            }
             FileManager.save(Files.Players);
             Main.getInstance().getListeners().players = FileManager.getValues().get(Files.Players);
         }

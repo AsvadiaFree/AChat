@@ -16,7 +16,7 @@ public class Commands implements CommandExecutor {
             if (args.length < 2)
                 return false;
             YamlConfiguration players = FileManager.getValues().get(Files.Players);
-            players.set(args[0], args[1]);
+            players.set(args[0].toLowerCase(), Integer.parseInt(args[1]));
             FileManager.save(Files.Players);
             Main.getInstance().getListeners().players = FileManager.getValues().get(Files.Players);
         }

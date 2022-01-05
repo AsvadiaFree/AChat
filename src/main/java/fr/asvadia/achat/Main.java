@@ -24,6 +24,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         listeners = new Listeners();
         getServer().getPluginManager().registerEvents(listeners, this);
+        getCommand("achat").setExecutor(new Commands());
     }
 
     public static Main getInstance() {

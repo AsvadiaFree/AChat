@@ -22,33 +22,35 @@ public class Listeners implements Listener {
     public YamlConfiguration config = FileManager.getValues().get(Files.Config);
     public YamlConfiguration players = FileManager.getValues().get(Files.Players);
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         event.setCancelled(true);
         Player player = event.getPlayer();
         for (String s : config.getConfigurationSection("formats").getKeys(false)) {
             if (player.hasPermission("achat." + s) || s.equals("default")) {
                 int choose = 1;
-                if (players.contains(player.getName())
-                        && players.getInt(player.getName()) <= config.getConfigurationSection("formats." + s).getKeys(false).size())
-                    choose = players.getInt(player.getName());
-                Set<String> texts = config.getConfigurationSection("formats." + s + "." + choose + ".texts").getKeys(false);
-                Set<String> tooltips = config.getConfigurationSection("formats." + s + "." + choose + ".hoverTexts").getKeys(false);
-                BaseComponent[] messages = new BaseComponent[texts.size()];
-                int n = 0;
-                for (String s1 : texts) {
-                    TextComponent text = new TextComponent(ChatColor.translateAlternateColorCodes('&', config.getString("formats." + s + "." + choose + ".texts." + s1)));
-                    if (PlaceholderAPI.containsPlaceholders(text.getText()))
-                        text.setText(PlaceholderAPI.setPlaceholders(player, text.getText()));
-                    if (tooltips.contains(s1)) {
-                        String hoverText = config.getString("formats." + s + "." + choose + ".hoverTexts." + s1);
-                        if (PlaceholderAPI.containsPlaceholders(hoverText))
-                            hoverText = PlaceholderAPI.setPlaceholders(player, hoverText);
-                        text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(hoverText)));
+                if (players.contains(player.getName().toLowerCase())
+                        && players.getInt(player.getName().toLowerCase()) <= config.getConfigurationSection("formats." + s).getKeys(false).size())
+                    choose = players.getInt(player.getName().toLowerCase());
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    Set<String> texts = config.getConfigurationSection("formats." + s + "." + choose + ".texts").getKeys(false);
+                    Set<String> tooltips = config.getConfigurationSection("formats." + s + "." + choose + ".hoverTexts").getKeys(false);
+                    BaseComponent[] messages = new BaseComponent[texts.size()];
+                    int n = 0;
+                    for (String s1 : texts) {
+                        TextComponent text = new TextComponent(ChatColor.translateAlternateColorCodes('&', config.getString("formats." + s + "." + choose + ".texts." + s1).replaceAll("%message%", event.getMessage())));
+                        if (PlaceholderAPI.containsPlaceholders(text.getText()))
+                            text.setText(PlaceholderAPI.setPlaceholders(player, text.getText()));
+                        if (tooltips.contains(s1)) {
+                            String hoverText = config.getString("formats." + s + "." + choose + ".hoverTexts." + s1);
+                            if (PlaceholderAPI.containsPlaceholders(hoverText))
+                                hoverText = PlaceholderAPI.setPlaceholders(player, hoverText);
+                            text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(hoverText)));
+                        }
+                        messages[n++] = text;
                     }
-                    messages[n++] = text;
+                    p.spigot().sendMessage(messages);
                 }
-                Bukkit.getServer().spigot().broadcast(messages);
                 break;
             }
         }

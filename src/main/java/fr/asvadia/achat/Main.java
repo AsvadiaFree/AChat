@@ -1,5 +1,7 @@
 package fr.asvadia.achat;
 
+import fr.asvadia.achat.commands.Commands;
+import fr.asvadia.achat.commands.Messages;
 import fr.asvadia.achat.utils.File.FileManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,6 +27,9 @@ public class Main extends JavaPlugin {
         listeners = new Listeners();
         getServer().getPluginManager().registerEvents(listeners, this);
         getCommand("achat").setExecutor(new Commands());
+        Messages messages = new Messages();
+        getCommand("message").setExecutor(messages);
+        getCommand("reply").setExecutor(messages);
     }
 
     public static Main getInstance() {

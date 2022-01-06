@@ -1,5 +1,6 @@
-package fr.asvadia.achat;
+package fr.asvadia.achat.commands;
 
+import fr.asvadia.achat.Main;
 import fr.asvadia.achat.utils.File.FileManager;
 import fr.asvadia.achat.utils.File.Files;
 import org.bukkit.command.Command;

@@ -59,16 +59,10 @@ public class Listeners implements Listener {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     try {
                         // Choose chat template
-                        int choose = 1;
-                        if (players.contains(p.getName().toLowerCase() + ".choose")
-                                && players.getInt(p.getName().toLowerCase() + ".choose") <= config.getConfigurationSection("formats." + s).getKeys(false).size())
-                            choose = players.getInt(p.getName().toLowerCase() + ".choose");
+                        int choose = getChoose(s, players, config, p);
 
                         //Translate message
-                        String message = event.getMessage();
-                        if (players.contains(p.getName().toLowerCase() + ".trad") && players.getBoolean(p.getName().toLowerCase() + ".trad"))
-                            if (!p.getLocale().equals(GoogleTranslate.getDisplayLanguage(event.getMessage())))
-                                message = GoogleTranslate.translate(p.getLocale(), message);
+                        String message = translateMessage(event.getMessage(), players, p);
 
                         //Format message
                         texts = config.getConfigurationSection("formats." + s + "." + choose + ".texts").getKeys(false);
@@ -97,6 +91,21 @@ public class Listeners implements Listener {
                 break;
             }
         }
+    }
+
+    public int getChoose(String s, YamlConfiguration players, YamlConfiguration config, Player p) {
+        int choose = 1;
+        if (players.contains(p.getName().toLowerCase() + ".choose")
+                && players.getInt(p.getName().toLowerCase() + ".choose") <= config.getConfigurationSection("formats." + s).getKeys(false).size())
+            choose = players.getInt(p.getName().toLowerCase() + ".choose");
+        return choose;
+    }
+
+    public static String translateMessage(String message, YamlConfiguration players, Player p) throws IOException {
+        if (players.contains(p.getName().toLowerCase() + ".trad") && players.getBoolean(p.getName().toLowerCase() + ".trad"))
+            if (!p.getLocale().equals(GoogleTranslate.getDisplayLanguage(message)))
+                message = GoogleTranslate.translate(p.getLocale(), message);
+        return message;
     }
 
     private boolean isSpam(String str) {

@@ -4,3 +4,10 @@ version: 1.0
 api-version: 1.17
 commands:
   achat:
+  message:
+    aliases:
+      - m
+      - msg
+  reply:
+    aliases:
+      - r

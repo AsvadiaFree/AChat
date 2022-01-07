@@ -1,6 +1,7 @@
 package fr.asvadia.achat.commands;
 
 import fr.asvadia.achat.Listeners;
+import fr.asvadia.achat.Main;
 import fr.asvadia.achat.utils.File.FileManager;
 import fr.asvadia.achat.utils.File.Files;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -20,10 +21,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class Messages implements CommandExecutor {
     private final HashMap<UUID, UUID> LAST_REPLY = new HashMap<>();
@@ -85,7 +83,9 @@ public class Messages implements CommandExecutor {
     private void sendMessage(@NotNull String message, YamlConfiguration config, YamlConfiguration players, Player[] player) {
         Set<String> texts;
         Set<String> holderTexts;
-        for (Player p : player) {
+        Set<Player> ps = Main.getInstance().spys;
+        Collections.addAll(ps, player);
+        for (Player p : ps) {
             try {
                 // Get choose of player
                 int choose = getChoose(players, config, p);
@@ -96,7 +96,7 @@ public class Messages implements CommandExecutor {
                 //Format message
                 texts = config.getConfigurationSection("private.formats." + choose + ".texts").getKeys(false);
                 holderTexts = config.getConfigurationSection("private.formats." + choose + ".hoverTexts").getKeys(false);
-                BaseComponent[] messages = new BaseComponent[texts.size()];
+                List<BaseComponent> messages = new ArrayList<>();
                 int n = 0;
                 for (String s1 : texts) {
                     TextComponent text = new TextComponent(ChatColor.translateAlternateColorCodes('&', config.getString("private.formats." + choose + ".texts." + s1).replaceAll("%message%", msg)));
@@ -110,14 +110,16 @@ public class Messages implements CommandExecutor {
                         text.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(config.getString("private.formats." + choose + ".hoverTexts." + s1 + ".cmd.type")), PlaceholderAPI.setPlaceholders(player[0], config.getString("private.formats." + choose + ".hoverTexts." + s1 + ".cmd.text"))));
                     }
                     if (!StringUtils.isBlank(text.getText()))
-                        messages[n++] = text;
+                        messages.add(text);
                 }
-                p.spigot().sendMessage(messages);
+                if (Main.getInstance().spys.contains(p))
+                    messages.add(0, new TextComponent(ChatColor.translateAlternateColorCodes('&', config.getString("spy.text"))));
+                p.spigot().sendMessage(messages.toArray(new BaseComponent[0]));
 
                 //Register reply
                 UUID other = player[0].getUniqueId();
-                if (player.length == 2)
-                     other = player[0].getUniqueId() == p.getUniqueId() ? player[1].getUniqueId() : player[0].getUniqueId();
+                if (player.length == 2 && p.getUniqueId() != player[1].getUniqueId())
+                     other = player[1].getUniqueId();
                 LAST_REPLY.put(p.getUniqueId(), other);
                 LAST_REPLY_TIME.put(p.getUniqueId(), System.currentTimeMillis());
             } catch (IOException e) {

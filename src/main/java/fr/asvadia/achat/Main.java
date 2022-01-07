@@ -2,14 +2,19 @@ package fr.asvadia.achat;
 
 import fr.asvadia.achat.commands.Commands;
 import fr.asvadia.achat.commands.Messages;
+import fr.asvadia.achat.commands.Spy;
 import fr.asvadia.achat.utils.File.FileManager;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Main extends JavaPlugin {
     private static Main instance;
     private Listeners listeners;
+    public final Set<Player> spys = new HashSet<>();
 
     @Override
     public void onLoad() {
@@ -30,6 +35,7 @@ public class Main extends JavaPlugin {
         Messages messages = new Messages();
         getCommand("message").setExecutor(messages);
         getCommand("reply").setExecutor(messages);
+        getCommand("spy").setExecutor(new Spy());
     }
 
     public static Main getInstance() {

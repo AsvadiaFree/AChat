@@ -29,6 +29,8 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
+        if (event.isCancelled())
+            return;
         //Base
         event.setCancelled(true);
         Player player = event.getPlayer();

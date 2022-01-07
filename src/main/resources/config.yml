@@ -73,4 +73,8 @@ mention:
   text: "%player% vous à mentionné !"
 spam:
   text: "Merci de ne pas spam !"
+spy:
+  text: "&7(spy) "
+  on: "Spy activé"
+  off: "Spy désactivé"
 #achat.asvadium

@@ -33,12 +33,6 @@ public class Listeners implements Listener {
         event.setCancelled(true);
         Player player = event.getPlayer();
 
-        //Anti-Spam
-        if (isSpam(event.getMessage())) {
-            player.sendMessage(config.getString("spam.text"));
-            return;
-        }
-
         //Mention
         String str = event.getMessage().toLowerCase();
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -106,9 +100,5 @@ public class Listeners implements Listener {
             if (!p.getLocale().equals(GoogleTranslate.getDisplayLanguage(message)))
                 message = GoogleTranslate.translate(p.getLocale(), message);
         return message;
-    }
-
-    private boolean isSpam(String str) {
-        return false;
     }
 }

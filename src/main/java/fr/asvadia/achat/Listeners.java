@@ -41,7 +41,7 @@ public class Listeners implements Listener {
             if (p.getName().equals(player.getName()))
                 continue;
             if (str.contains(p.getName().toLowerCase())) {
-                p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(config.getString("mention.text").replaceAll("%player%", player.getName())));
+                p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&', config.getString("mention.text").replaceAll("%player%", player.getName()))));
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 100, 100);
             }
         }

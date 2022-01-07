@@ -22,10 +22,10 @@ public class Spy implements CommandExecutor {
             YamlConfiguration config = FileManager.getValues().get(Files.Config);
             if (spys.contains(p)) {
                 spys.remove(p);
-                p.sendMessage(config.getString("spy.off"));
+                p.sendMessage(config.getString("spy.soff"));
             } else {
                 spys.add(p);
-                p.sendMessage(config.getString("spy.on"));
+                p.sendMessage(config.getString("spy.son"));
             }
         }
         return false;

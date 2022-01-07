@@ -63,6 +63,12 @@ public class Messages implements CommandExecutor {
                             return false;
                         }
 
+                        player[1] = Bukkit.getPlayer(LAST_REPLY.get(player[0].getUniqueId()));
+                        if (player[1] == null) {
+                            player[0].sendMessage(Objects.requireNonNull(config.getString("private.messages.playerNotFound")));
+                            return false;
+                        }
+
                         // Compile messages
                         StringBuilder message = new StringBuilder();
                         for (String arg : args)
@@ -86,13 +92,23 @@ public class Messages implements CommandExecutor {
         Set<String> holderTexts;
         Set<Player> ps = new HashSet<>(Spy.spys);
         Collections.addAll(ps, player);
+        ps.removeIf(Objects::isNull);
+
         for (Player p : ps) {
             try {
-                // Get choose of player
-                int choose = getChoose(players, config, p);
+                String choose;
+                if (p.getUniqueId().equals(player[1].getUniqueId()))
+                    choose = "receiver";
+                else
+                    choose = "sender";
 
                 // Translate message
                 String msg = Listeners.translateMessage(message, players, p);
+
+                //Register reply
+                Player other = player[0];
+                if (player.length == 2 && !p.getUniqueId().equals(player[1].getUniqueId()))
+                    other = player[1];
 
                 //Format message
                 texts = config.getConfigurationSection("private.formats." + choose + ".texts").getKeys(false);
@@ -102,13 +118,13 @@ public class Messages implements CommandExecutor {
                 for (String s1 : texts) {
                     TextComponent text = new TextComponent(ChatColor.translateAlternateColorCodes('&', config.getString("private.formats." + choose + ".texts." + s1).replaceAll("%message%", msg)));
                     if (PlaceholderAPI.containsPlaceholders(text.getText()))
-                        text.setText(PlaceholderAPI.setPlaceholders(player[0], text.getText()));
+                        text.setText(PlaceholderAPI.setPlaceholders(other, text.getText()));
                     if (holderTexts.contains(s1)) {
                         String hoverText = config.getString("private.formats." + choose + ".hoverTexts." + s1 + ".text");
                         if (PlaceholderAPI.containsPlaceholders(hoverText))
-                            hoverText = PlaceholderAPI.setPlaceholders(player[0], hoverText);
+                            hoverText = PlaceholderAPI.setPlaceholders(other, hoverText);
                         text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(hoverText)));
-                        text.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(config.getString("private.formats." + choose + ".hoverTexts." + s1 + ".cmd.type")), PlaceholderAPI.setPlaceholders(player[0], config.getString("private.formats." + choose + ".hoverTexts." + s1 + ".cmd.text"))));
+                        text.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(config.getString("private.formats." + choose + ".hoverTexts." + s1 + ".cmd.type")), PlaceholderAPI.setPlaceholders(other, config.getString("private.formats." + choose + ".hoverTexts." + s1 + ".cmd.text"))));
                     }
                     if (!StringUtils.isBlank(text.getText()))
                         messages.add(text);
@@ -119,23 +135,11 @@ public class Messages implements CommandExecutor {
                 }
                 p.spigot().sendMessage(messages.toArray(new BaseComponent[0]));
 
-                //Register reply
-                UUID other = player[0].getUniqueId();
-                if (player.length == 2 && p.getUniqueId() != player[1].getUniqueId())
-                     other = player[1].getUniqueId();
-                LAST_REPLY.put(p.getUniqueId(), other);
+                LAST_REPLY.put(p.getUniqueId(), other.getUniqueId());
                 LAST_REPLY_TIME.put(p.getUniqueId(), System.currentTimeMillis());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    public int getChoose(YamlConfiguration players, YamlConfiguration config, Player p) {
-        int choose = 1;
-        if (players.contains(p.getName().toLowerCase() + ".pchoose")
-                && players.getInt(p.getName().toLowerCase() + ".pchoose") <= config.getConfigurationSection("private").getKeys(false).size())
-            choose = players.getInt(p.getName().toLowerCase() + ".pchoose");
-        return choose;
     }
 }

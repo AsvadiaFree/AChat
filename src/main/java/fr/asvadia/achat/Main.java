@@ -14,7 +14,6 @@ import java.util.Set;
 public class Main extends JavaPlugin {
     private static Main instance;
     private Listeners listeners;
-    public final Set<Player> spys = new HashSet<>();
 
     @Override
     public void onLoad() {

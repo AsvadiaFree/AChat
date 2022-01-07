@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
 
 public class Messages implements CommandExecutor {
     private final HashMap<UUID, UUID> LAST_REPLY = new HashMap<>();
@@ -83,7 +84,7 @@ public class Messages implements CommandExecutor {
     private void sendMessage(@NotNull String message, YamlConfiguration config, YamlConfiguration players, Player[] player) {
         Set<String> texts;
         Set<String> holderTexts;
-        Set<Player> ps = Main.getInstance().spys;
+        Set<Player> ps = new HashSet<>(Spy.spys);
         Collections.addAll(ps, player);
         for (Player p : ps) {
             try {
@@ -112,8 +113,10 @@ public class Messages implements CommandExecutor {
                     if (!StringUtils.isBlank(text.getText()))
                         messages.add(text);
                 }
-                if (Main.getInstance().spys.contains(p))
+                if (Spy.spys.contains(p)) {
                     messages.add(0, new TextComponent(ChatColor.translateAlternateColorCodes('&', config.getString("spy.text"))));
+                    Main.getInstance().getLogger().log(Level.INFO ,"true spy");
+                }
                 p.spigot().sendMessage(messages.toArray(new BaseComponent[0]));
 
                 //Register reply

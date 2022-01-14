@@ -49,6 +49,7 @@ public class Listeners implements Listener {
         }
 
         //Custom chat
+        boolean isSend = false;
         for (String s : config.getConfigurationSection("formats").getKeys(false)) {
             if (player.hasPermission("achat." + s) || s.equals("default")) {
                 // Format message
@@ -81,12 +82,14 @@ public class Listeners implements Listener {
                                 text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(hoverText)));
                                 text.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(config.getString("formats." + s + "." + choose + ".hoverTexts." + s1 + ".cmd.type")), PlaceholderAPI.setPlaceholders(player, config.getString("formats." + s + "." + choose + ".hoverTexts." + s1 + ".cmd.text"))));
                             }
-                            if (!text.getText().replaceAll(" ", "").equals("")) {
-                                Bukkit.getLogger().info("Text is not blank : '" + text.getText() + "'");
+                            if (!text.getText().replaceAll(" ", "").equals(""))
                                 messages.add(text);
-                            }
                         }
                         p.spigot().sendMessage(messages.toArray(new BaseComponent[0]));
+                        if (!isSend) {
+                            Bukkit.getConsoleSender().spigot().sendMessage(messages.toArray(new BaseComponent[0]));
+                            isSend = true;
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

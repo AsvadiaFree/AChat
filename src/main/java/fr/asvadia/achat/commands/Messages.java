@@ -114,7 +114,6 @@ public class Messages implements CommandExecutor {
                 texts = config.getConfigurationSection("private.formats." + choose + ".texts").getKeys(false);
                 holderTexts = config.getConfigurationSection("private.formats." + choose + ".hoverTexts").getKeys(false);
                 List<BaseComponent> messages = new ArrayList<>();
-                int n = 0;
                 for (String s1 : texts) {
                     TextComponent text = new TextComponent(ChatColor.translateAlternateColorCodes('&', config.getString("private.formats." + choose + ".texts." + s1).replaceAll("%message%", msg)));
                     if (PlaceholderAPI.containsPlaceholders(text.getText()))
@@ -129,10 +128,8 @@ public class Messages implements CommandExecutor {
                     if (!StringUtils.isBlank(text.getText()))
                         messages.add(text);
                 }
-                if (Spy.spys.contains(p)) {
-                    messages.add(0, new TextComponent(ChatColor.translateAlternateColorCodes('&', config.getString("spy.text"))));
-                    Main.getInstance().getLogger().log(Level.INFO ,"true spy");
-                }
+                if (Spy.spys.contains(p))
+                    messages.add(0, new TextComponent(ChatColor.translateAlternateColorCodes('&', config.getString("spy.text").replaceAll("%sender%", player[0].getName()))));
                 p.spigot().sendMessage(messages.toArray(new BaseComponent[0]));
 
                 LAST_REPLY.put(p.getUniqueId(), other.getUniqueId());

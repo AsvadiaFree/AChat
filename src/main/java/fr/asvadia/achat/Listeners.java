@@ -21,6 +21,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class Listeners implements Listener {
@@ -38,7 +40,7 @@ public class Listeners implements Listener {
         //Mention
         String str = event.getMessage().toLowerCase();
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.getName().equals(player.getName()))
+            if (p.equals(player))
                 continue;
             if (str.contains(p.getName().toLowerCase())) {
                 p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&', config.getString("mention.text").replaceAll("%player%", player.getName()))));
@@ -59,14 +61,17 @@ public class Listeners implements Listener {
 
                         //Translate message
                         String message = translateMessage(event.getMessage(), players, p);
+                        if (player.hasPermission("achat.color"))
+                            message = ChatColor.translateAlternateColorCodes('&', message);
 
                         //Format message
                         texts = config.getConfigurationSection("formats." + s + "." + choose + ".texts").getKeys(false);
                         holderTexts = config.getConfigurationSection("formats." + s + "." + choose + ".hoverTexts").getKeys(false);
-                        BaseComponent[] messages = new BaseComponent[texts.size()];
-                        int n = 0;
+                        List<BaseComponent> messages = new ArrayList<>();
                         for (String s1 : texts) {
-                            TextComponent text = new TextComponent(ChatColor.translateAlternateColorCodes('&', config.getString("formats." + s + "." + choose + ".texts." + s1).replaceAll("%message%", message)));
+                            String msg = ChatColor.translateAlternateColorCodes('&', config.getString("formats." + s + "." + choose + ".texts." + s1))
+                                    .replaceAll("%message%", message);
+                            TextComponent text = new TextComponent(msg);
                             if (PlaceholderAPI.containsPlaceholders(text.getText()))
                                 text.setText(PlaceholderAPI.setPlaceholders(player, text.getText()));
                             if (holderTexts.contains(s1)) {
@@ -76,10 +81,12 @@ public class Listeners implements Listener {
                                 text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(hoverText)));
                                 text.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(config.getString("formats." + s + "." + choose + ".hoverTexts." + s1 + ".cmd.type")), PlaceholderAPI.setPlaceholders(player, config.getString("formats." + s + "." + choose + ".hoverTexts." + s1 + ".cmd.text"))));
                             }
-                            if (!StringUtils.isBlank(text.getText()))
-                                messages[n++] = text;
+                            if (!text.getText().replaceAll(" ", "").equals("")) {
+                                Bukkit.getLogger().info("Text is not blank : '" + text.getText() + "'");
+                                messages.add(text);
+                            }
                         }
-                        p.spigot().sendMessage(messages);
+                        p.spigot().sendMessage(messages.toArray(new BaseComponent[0]));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

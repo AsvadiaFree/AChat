@@ -26,7 +26,6 @@ public class Commands implements CommandExecutor {
                 players.set(args[0].toLowerCase() + ".choose", Integer.parseInt(args[1]));
             }
             FileManager.save(Files.Players);
-            Main.getInstance().getListeners().players = FileManager.getValues().get(Files.Players);
         }
         return false;
     }

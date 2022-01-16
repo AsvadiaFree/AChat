@@ -21,16 +21,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Listeners implements Listener {
     public YamlConfiguration config = FileManager.getValues().get(Files.Config);
     public YamlConfiguration players = FileManager.getValues().get(Files.Players);
-    private final HashMap<Player, String> messages = new HashMap<>();
-    private final HashMap<Player, Long> flood = new HashMap<>();
+    private final HashMap<String, String> messages = new HashMap<>();
+    private final HashMap<String, Long> flood = new HashMap<>();
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
@@ -43,16 +40,16 @@ public class Listeners implements Listener {
             String str = event.getMessage().toLowerCase();
 
             //Anti-Spam
-            if (player.hasPermission("astaff")) {
-                if ((messages.containsKey(player)
-                        && messages.get(player).equals(str))
-                        || (flood.containsKey(player)
-                        && (System.currentTimeMillis() - flood.get(player)) < 2000)) {
+            if (!player.hasPermission("astaff")) {
+                if ((messages.containsKey(player.getUniqueId().toString())
+                        && messages.get(player.getUniqueId().toString()).equals(str))
+                        || (flood.containsKey(player.getUniqueId().toString())
+                        && (System.currentTimeMillis() - flood.get(player.getUniqueId().toString())) < 2000)) {
                     player.sendMessage("§6§lChat §f§l» §cMerci de ne pas spam le chat !");
                     return;
                 }
-                messages.put(player, str);
-                flood.put(player, System.currentTimeMillis());
+                messages.put(player.getUniqueId().toString(), str);
+                flood.put(player.getUniqueId().toString(), System.currentTimeMillis());
             }
 
             //Mention

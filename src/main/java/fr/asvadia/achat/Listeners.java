@@ -22,12 +22,15 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 public class Listeners implements Listener {
     public YamlConfiguration config = FileManager.getValues().get(Files.Config);
     public YamlConfiguration players = FileManager.getValues().get(Files.Players);
+    private final HashMap<Player, String> messages = new HashMap<>();
+    private final HashMap<Player, Long> flood = new HashMap<>();
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
@@ -37,9 +40,20 @@ public class Listeners implements Listener {
             //Base
             event.setCancelled(true);
             Player player = event.getPlayer();
+            String str = event.getMessage().toLowerCase();
+
+            //Anti-Spam
+            if ((messages.containsKey(player)
+                    && messages.get(player).equals(str))
+                    || (flood.containsKey(player)
+                    && (System.currentTimeMillis() - flood.get(player)) < 2000)) {
+                player.sendMessage("§6§lChat §f§l» §cMerci de ne pas spam le chat !");
+                return;
+            }
+            messages.put(player, str);
+            flood.put(player, System.currentTimeMillis());
 
             //Mention
-            String str = event.getMessage().toLowerCase();
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (p.equals(player))
                     continue;

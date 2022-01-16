@@ -43,15 +43,17 @@ public class Listeners implements Listener {
             String str = event.getMessage().toLowerCase();
 
             //Anti-Spam
-            if ((messages.containsKey(player)
-                    && messages.get(player).equals(str))
-                    || (flood.containsKey(player)
-                    && (System.currentTimeMillis() - flood.get(player)) < 2000)) {
-                player.sendMessage("§6§lChat §f§l» §cMerci de ne pas spam le chat !");
-                return;
+            if (player.hasPermission("astaff")) {
+                if ((messages.containsKey(player)
+                        && messages.get(player).equals(str))
+                        || (flood.containsKey(player)
+                        && (System.currentTimeMillis() - flood.get(player)) < 2000)) {
+                    player.sendMessage("§6§lChat §f§l» §cMerci de ne pas spam le chat !");
+                    return;
+                }
+                messages.put(player, str);
+                flood.put(player, System.currentTimeMillis());
             }
-            messages.put(player, str);
-            flood.put(player, System.currentTimeMillis());
 
             //Mention
             for (Player p : Bukkit.getOnlinePlayers()) {

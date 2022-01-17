@@ -1,7 +1,6 @@
 package fr.asvadia.achat.commands;
 
 import fr.asvadia.achat.Listeners;
-import fr.asvadia.achat.Main;
 import fr.asvadia.achat.utils.File.FileManager;
 import fr.asvadia.achat.utils.File.Files;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Level;
 
 public class Messages implements CommandExecutor {
     private final HashMap<UUID, UUID> LAST_REPLY = new HashMap<>();

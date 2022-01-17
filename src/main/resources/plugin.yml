@@ -1,14 +1,7 @@
-name: AChat
-main: fr.asvadia.achat.Main
-version: 1.0
+name: ${project.name}
+version: ${project.version}
+description: ${project.description}
+website: ${project.url}
+authors: [SkyfightTV, MrCubee]
+main: eu.asvadia.achat.Main
 api-version: 1.17
-commands:
-  achat:
-  message:
-    aliases:
-      - m
-      - msg
-  reply:
-    aliases:
-      - r
-  spy:
